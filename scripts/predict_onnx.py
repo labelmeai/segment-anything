@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import imgviz
 import numpy as np
+import PIL.Image
+import skimage.measure
 
 import onnxruntime
 
@@ -82,8 +84,28 @@ decoder_inputs = {
     "orig_im_size": np.array(image.shape[:2], dtype=np.float32),
 }
 
-masks, _, logits = decoder_session.run(None, decoder_inputs)
+masks, _, _ = decoder_session.run(None, decoder_inputs)
+masks = masks[0]  # (1, N, H, W) -> (N, H, W)
 masks = masks > 0.0
 
-for i in range(masks.shape[1]):
-    imgviz.io.imsave(f"{i}.jpg", imgviz.label2rgb(masks[0, i], imgviz.rgb2gray(image)))
+
+def get_contour_length(contour):
+    contour_start = contour
+    contour_end = np.r_[contour[1:], contour[0:1]]
+    return np.linalg.norm(contour_end - contour_start, axis=1).sum()
+
+
+for i, mask in enumerate(masks):
+    imgviz.io.imsave(f"{i}.jpg", imgviz.label2rgb(mask, imgviz.rgb2gray(image)))
+
+    contours = skimage.measure.find_contours(mask)
+    contour = max(contours, key=get_contour_length)
+    coords = skimage.measure.approximate_polygon(
+        coords=contour,
+        tolerance=np.ptp(contour, axis=0).max() / 100,
+    )
+    image_pil = PIL.Image.fromarray(image)
+    imgviz.draw.line_(image_pil, yx=coords, fill=(0, 255, 0))
+    for coord in coords:
+        imgviz.draw.circle_(image_pil, center=coord, diameter=10, fill=(0, 255, 0))
+    imgviz.io.imsave(f"{i}_contour.jpg", np.asarray(image_pil))
