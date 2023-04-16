@@ -19,5 +19,6 @@ python export_onnx_model.py \
   --encoder-output ../models/sam_vit_h_4b8939.encoder.onnx \
   --decoder-output ../models/sam_vit_h_4b8939.decoder.onnx \
   --quantize-encoder-out ../models/sam_vit_h_4b8939.quantized.encoder.onnx \
-  --quantize-decoder-out ../models/sam_vit_h_4b8939.quantized.decoder.onnx
+  --quantize-decoder-out ../models/sam_vit_h_4b8939.quantized.decoder.onnx \
+  --return-single-mask
 { set +x; } 2>/dev/null
