@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-import imgviz
 import numpy as np
+
+import imgviz
+import onnxruntime
 import PIL.Image
 import skimage.measure
-
-import onnxruntime
-
 
 image = imgviz.io.imread("../notebooks/images/truck.jpg")
 
@@ -17,13 +16,13 @@ decoder_path = "../models/sam_vit_h_4b8939.quantized.decoder.onnx"
 encoder_session = onnxruntime.InferenceSession(encoder_path)
 decoder_session = onnxruntime.InferenceSession(decoder_path)
 
-from segment_anything.utils.transforms import ResizeLongestSide
-
 image_size = 1024
 
 if 0:
     import torch
     from torch.nn import functional as F
+
+    from segment_anything.utils.transforms import ResizeLongestSide
 
     transform = ResizeLongestSide(image_size)
     input_image = transform.apply_image(image)
