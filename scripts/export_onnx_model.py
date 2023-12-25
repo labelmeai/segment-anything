@@ -4,14 +4,16 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import torch
-
-from segment_anything import build_sam, build_sam_vit_b, build_sam_vit_l
-from segment_anything.modeling.sam import Sam
-from segment_anything import sam_model_registry
-from segment_anything.utils.onnx import SamOnnxModel
 import onnx
+import torch
 from onnx.external_data_helper import convert_model_to_external_data
+
+from segment_anything import build_sam
+from segment_anything import build_sam_vit_b
+from segment_anything import build_sam_vit_l
+from segment_anything import sam_model_registry
+from segment_anything.modeling.sam import Sam
+from segment_anything.utils.onnx import SamOnnxModel
 
 import argparse
 import warnings
